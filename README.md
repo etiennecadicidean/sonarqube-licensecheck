@@ -1,8 +1,6 @@
 SonarQube License-Check
 ===================
 
-[![Build Status](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck.png?branch=master)](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck)
-
 This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects in an organization adhere to a set of
 standard libraries and versions. This enables the governance of the used libraries and licences.
 
@@ -17,14 +15,30 @@ This plugin is compatible:
  * 1.x versions with SonarQube >= 5.3 and < 6.
  * 2.x version with SonarQube >= 6.5 and < 7.
 
+If you want to test it before, please install this docker image about sonarqube :
+`docker pull sonarqube:6.7.5` and follow bellow instructions
+
 ## Installation
 
-Put the pre-built jar-file (from release downloads) in the directory `$SONARQUBE_HOME/extensions/plugins` and
-restart the server to install the plugin. Activate the rules of this plugin ("License is not allowed", "Dependency has unknown license") in your SonarQube quality profiles - otherwise the plugin is not executed.
+Build the jar plugin with maven command line : `mvn clean package`
+
+Put the pre-built jar-file in the directory `$SONARQUBE_HOME/extensions/plugins` and
+restart the server to install the plugin. Activate the rules of this plugin ("License is not allowed", "Dependency has unknown license") in your SonarQube quality profiles (java & swift) - otherwise the plugin is not executed.
 
 ## Execution
 
-When a project is analyzed using the `mvn sonar:sonar` in command line the extension is started automatically.
+When a project is analyzed using the :
+* `mvn sonar:sonar` in command line the extension is started automatically.
+* `./run-sonar-swift.sh` in command line the extension is started automatically with `sonar Scanner` for Swift Project.
+* `gralde sonarqube` in command line the extension is started automatically with android project.
+
+### Important
+If you want to use the `./run-sonar-swift.sh` command line, think to install `https://github.com/pivotal/LicenseFinder` before with this command line :
+* `gem install license_finder`
+
+and execute it with this command line into your root iOS project : 
+* `license_finder report -p --format json --columns=name version authors licenses license_links approved summary description homepage groups  > output.json`
+
 
 ## Configuration
 
@@ -50,6 +64,8 @@ The plugin scans for dependencies defined in your project including all transiti
 Currently supported formats are:
 * Maven POM files - all dependencies with scope "compile" and "runtime" are checked
 * NPM package.json files - all dependencies (except "devDependencies") are checked
+* Gradle dependencies
+* Swift dependencies (Must be analysis with `License_finder tool` AND converted with ruby script !)
 
 ### Project Dashboard
 

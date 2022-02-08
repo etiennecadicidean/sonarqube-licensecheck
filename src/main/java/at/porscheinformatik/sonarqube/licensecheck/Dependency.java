@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import javax.json.Json;
@@ -18,8 +19,8 @@ public class Dependency implements Comparable<Dependency>
     private String name;
     private String version;
     private String license;
-    private String status;
-    private String localPath;
+    private Status status;
+    private String pomPath;
 
     public Dependency(String name, String version, String license)
     {
@@ -59,87 +60,47 @@ public class Dependency implements Comparable<Dependency>
         this.license = license;
     }
 
-    public void setStatus(final String status)
+    public void setStatus(final Status status)
     {
         this.status = status;
     }
 
-    public String getStatus()
+    public Status getStatus()
     {
         return status;
     }
 
-    public String getLocalPath()
+    public String getPomPath()
     {
-        return localPath;
+        return pomPath;
     }
 
-    public void setLocalPath(String localPath)
+    public void setPomPath(String pomPath)
     {
-        this.localPath = localPath;
+        this.pomPath = pomPath;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        Dependency that = (Dependency) o;
+        return Objects.equals(name, that.name) &&
+            Objects.equals(version, that.version) &&
+            Objects.equals(license, that.license);
     }
 
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) + ((license == null) ? 0 : license.hashCode());
-        result = (prime * result) + ((name == null) ? 0 : name.hashCode());
-        result = (prime * result) + ((version == null) ? 0 : version.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (obj == null)
-        {
-            return false;
-        }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        Dependency other = (Dependency) obj;
-        if (license == null)
-        {
-            if (other.license != null)
-            {
-                return false;
-            }
-        }
-        else if (!license.equals(other.license))
-        {
-            return false;
-        }
-        if (name == null)
-        {
-            if (other.name != null)
-            {
-                return false;
-            }
-        }
-        else if (!name.equals(other.name))
-        {
-            return false;
-        }
-        if (version == null)
-        {
-            if (other.version != null)
-            {
-                return false;
-            }
-        }
-        else if (!version.equals(other.version))
-        {
-            return false;
-        }
-        return true;
+        return Objects.hash(name, version, license);
     }
 
     @Override
@@ -204,8 +165,7 @@ public class Dependency implements Comparable<Dependency>
 
     public static String createString(Collection<Dependency> dependencies)
     {
-        TreeSet<Dependency> sortedDependencies = new TreeSet<>();
-        sortedDependencies.addAll(dependencies);
+        TreeSet<Dependency> sortedDependencies = new TreeSet<>(dependencies);
 
         StringWriter jsonString = new StringWriter();
         JsonGenerator generator = Json.createGenerator(jsonString);
@@ -215,12 +175,19 @@ public class Dependency implements Comparable<Dependency>
             String license = dependency.getLicense();
             generator.writeStartObject();
             generator.write("name", dependency.getName());
-            generator.write("version", dependency.getVersion());
+            generator.write("version", dependency.getVersion() != null ? dependency.getVersion() : "unkwown-version");
             generator.write("license", license != null ? license : " ");
             generator.writeEnd();
         }
         generator.writeEnd();
         generator.close();
         return jsonString.toString();
+    }
+
+    public enum Status
+    {
+        Allowed,
+        Forbidden,
+        Unknown
     }
 }

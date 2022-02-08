@@ -1,6 +1,6 @@
 {
   "name": "sonarqube-licensecheck",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "SonarQube License Check",
   "private": true,
   "scripts": {

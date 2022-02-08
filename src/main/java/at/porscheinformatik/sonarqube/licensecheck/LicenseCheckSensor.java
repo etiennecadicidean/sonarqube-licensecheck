@@ -3,6 +3,10 @@ package at.porscheinformatik.sonarqube.licensecheck;
 import java.util.Set;
 import java.util.TreeSet;
 
+import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.swift.SwiftDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.flutter.PubDependencyScanner;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
@@ -35,9 +39,13 @@ public class LicenseCheckSensor implements Sensor
         this.fs = fs;
         this.settings = settings;
         this.validateLicenses = validateLicenses;
-        this.scanners = new Scanner[]{
+        this.scanners = new Scanner[] {
             new PackageJsonDependencyScanner(),
-            new MavenDependencyScanner(mavenLicenseService, mavenDependencyService)};
+            new GradleDependencyScanner(mavenLicenseService),
+            new SwiftDependencyScanner(mavenLicenseService),
+            new MavenDependencyScanner(mavenLicenseService, mavenDependencyService),
+            new PubDependencyScanner(mavenLicenseService)
+        };
     }
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
@@ -70,7 +78,7 @@ public class LicenseCheckSensor implements Sensor
     public void describe(SensorDescriptor descriptor)
     {
         descriptor.name("License Check")
-            .createIssuesForRuleRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY);
+            .createIssuesForRuleRepositories(LicenseCheckRulesDefinition.getRepositories());
     }
 
     @Override
@@ -82,14 +90,15 @@ public class LicenseCheckSensor implements Sensor
 
             for (Scanner scanner : scanners)
             {
-                dependencies.addAll(scanner.scan(fs.baseDir()));
+                Set<Dependency> scannedLicenses = scanner.scan(fs.baseDir());
+                validateLicenses.validateLicenses(dependencies, context, scanner.getLanguage());
+                dependencies.addAll(scannedLicenses);
             }
-
             ProjectDefinition project = LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
-            Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
-            Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
+        
+            Set<License> usedLicenses = validateLicenses.getUsedLicenses(dependencies, project);
 
-            saveDependencies(context, validatedDependencies);
+            saveDependencies(context, dependencies);
             saveLicenses(context, usedLicenses);
         }
         else

@@ -1,9 +1,6 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckMetrics.DEPENDENCY;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckMetrics.INPUTDEPENDENCY;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckMetrics.INPUTLICENSE;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckMetrics.LICENSE;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckMetrics.*;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.ACTIVATION_KEY;
 import static org.sonar.api.ce.measure.Component.Type.MODULE;
 import static org.sonar.api.ce.measure.Component.Type.PROJECT;

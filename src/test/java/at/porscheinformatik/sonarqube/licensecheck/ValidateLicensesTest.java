@@ -62,7 +62,7 @@ public class ValidateLicensesTest
         DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "MIT")), context);
+        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "MIT")), context, LicenseCheckLanguage.JAVA.getLanguage());
 
         verify(context).newIssue();
         assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
@@ -74,7 +74,7 @@ public class ValidateLicensesTest
         SensorContext context = createContext();
 
         validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "Apache-2.0"),
-            new Dependency("another", "2.0", "Apache-2.0")), context);
+            new Dependency("another", "2.0", "Apache-2.0")), context, LicenseCheckLanguage.JAVA.getLanguage());
 
         verify(context, never()).newIssue();
     }
@@ -86,7 +86,7 @@ public class ValidateLicensesTest
         DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", null)), context);
+        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", null)), context, LicenseCheckLanguage.JAVA.getLanguage());
 
         verify(context).newIssue();
         assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));

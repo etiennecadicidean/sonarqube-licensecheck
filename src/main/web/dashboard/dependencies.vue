@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>Dependencies</h3>
-    <p>Here you see all project dependencies from Maven (including transitive) and NPM.</p>
+    <p>Here you see all project dependencies from Maven (including transitive), NPM, Gradle or iOS project.</p>
     <table class="data zebra">
       <thead>
       <tr>

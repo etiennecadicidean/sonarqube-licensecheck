@@ -5,9 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -18,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckLanguage;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 
 public class PackageJsonDependencyScanner implements Scanner
@@ -25,9 +24,9 @@ public class PackageJsonDependencyScanner implements Scanner
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageJsonDependencyScanner.class);
 
     @Override
-    public List<Dependency> scan(File file)
+    public Set<Dependency> scan(File moduleDir)
     {
-        File packageJsonFile = new File(file, "package.json");
+        File packageJsonFile = new File(moduleDir, "package.json");
 
         if (packageJsonFile.exists())
         {
@@ -47,12 +46,12 @@ public class PackageJsonDependencyScanner implements Scanner
                 LOGGER.error("Error reading package.json", e);
             }
         }
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
-    private List<Dependency> dependencyParser(JsonObject jsonDependencies, File packageJsonFile)
+    private Set<Dependency> dependencyParser(JsonObject jsonDependencies, File packageJsonFile)
     {
-        List<Dependency> dependencies = new ArrayList<>();
+        Set<Dependency> dependencies = new HashSet<>();
 
         File nodeModulesFolder = new File(packageJsonFile.getParentFile(), "node_modules");
         if (nodeModulesFolder.exists() && nodeModulesFolder.isDirectory())
@@ -66,7 +65,7 @@ public class PackageJsonDependencyScanner implements Scanner
         return dependencies;
     }
 
-    private static void moduleCheck(File nodeModulesFolder, String identifier, List<Dependency> dependencies)
+    private static void moduleCheck(File nodeModulesFolder, String identifier, Set<Dependency> dependencies)
     {
         File moduleFolder = new File(nodeModulesFolder, identifier);
 
@@ -109,5 +108,9 @@ public class PackageJsonDependencyScanner implements Scanner
                 LOGGER.error("Error adding dependency " + identifier, e);
             }
         }
+    }
+
+    public String getLanguage() {
+        return LicenseCheckLanguage.JAVASCRIPT.getLanguage();
     }
 }

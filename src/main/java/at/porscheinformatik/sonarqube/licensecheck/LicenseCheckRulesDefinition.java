@@ -22,26 +22,43 @@ import org.sonar.api.server.rule.RulesDefinition;
 /**
  * Repository for the rules used in the plugin
  */
-public final class LicenseCheckRulesDefinition implements RulesDefinition
-{
+public final class LicenseCheckRulesDefinition implements RulesDefinition {
+    
     @Override
-    public void define(Context context)
-    {
-        NewRepository repository = context.createRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY, "java");
-        repository.setName("License Check");
+    public void define(final Context context) {
+        for (int i = 0; i < LicenseCheckLanguage.values().length; i++) {
+            String language = LicenseCheckLanguage.values()[i].toString();
+            NewRepository repository = context.createRepository(getRepositoryKey(language), language);
+            repository.setName(getRepositoryName(language));
+            repository
+                    .createRule(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY)
+                    .setName("Dependency has unknown license [license-check]")
+                    .setHtmlDescription("The dependencies license could not be determined!")
+                    .setSeverity(Severity.BLOCKER);
 
-        repository
-            .createRule(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY)
-            .setName("Dependency has unknown license [license-check]")
-            .setHtmlDescription("The dependencies license could not be determined!")
-            .setSeverity(Severity.BLOCKER);
+            repository
+                    .createRule(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY)
+                    .setName("License is not allowed [license-check]")
+                    .setHtmlDescription("Violation because the license of the dependency is not allowed.")
+                    .setSeverity(Severity.BLOCKER);
 
-        repository
-            .createRule(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY)
-            .setName("License is not allowed [license-check]")
-            .setHtmlDescription("Violation because the license of the dependency is not allowed.")
-            .setSeverity(Severity.BLOCKER);
+            repository.done();
+        }
+    }
 
-        repository.done();
+    public static String getRepositoryName(String language) {
+        return "License Check" + "(" + language + ")";
+    }
+    
+    public static String getRepositoryKey(String language) {
+        return LicenseCheckMetrics.LICENSE_CHECK_KEY.concat(".").concat(language);
+    }
+
+    public static String[] getRepositories() {
+        String[] repoStrings = new String[LicenseCheckLanguage.values().length];
+        for (int i = 0; i < repoStrings.length; i++) {
+            repoStrings[i] = getRepositoryKey(LicenseCheckLanguage.values()[i].getLanguage());
+        }
+        return repoStrings;
     }
 }

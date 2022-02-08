@@ -4,12 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Properties;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckLanguage;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
@@ -53,8 +50,13 @@ public class MavenDependencyScanner implements Scanner
     }
 
     @Override
-    public List<Dependency> scan(File moduleDir)
+    public Set<Dependency> scan(File moduleDir)
     {
+        if (!new File(moduleDir, "pom.xml").exists())
+        {
+            LOGGER.info("No pom.xml file found in {} - skipping Maven dependency scan", moduleDir.getPath());
+            return Collections.emptySet();
+        }
         String userSettings = null;
         String globalSettings = null;
         CommandLine cmd = getCommandLineArgs();
@@ -73,7 +75,7 @@ public class MavenDependencyScanner implements Scanner
         return this.readDependecyList(moduleDir, userSettings, globalSettings)
             .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap(), userSettings, globalSettings))
             .map(this::mapMavenDependencyToLicense)
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     private Stream<Dependency> readDependecyList(File moduleDir, String userSettings, String globalSettings)
@@ -161,7 +163,7 @@ public class MavenDependencyScanner implements Scanner
             String version = matcher.group(3);
             String path = matcher.group(4);
             Dependency dependency = new Dependency(groupId + ":" + artifactId, version, null);
-            dependency.setLocalPath(path);
+            dependency.setPomPath(path);
             return dependency;
         }
         return null;
@@ -172,7 +174,7 @@ public class MavenDependencyScanner implements Scanner
     {
         return (Dependency dependency) ->
         {
-            String path = dependency.getLocalPath();
+            String path = dependency.getPomPath();
             if (path == null)
             {
                 return dependency;
@@ -244,5 +246,9 @@ public class MavenDependencyScanner implements Scanner
             // ignore unparsable command line args
         }
         return cmd;
+    }
+    
+    public String getLanguage() {
+        return LicenseCheckLanguage.JAVA.getLanguage();
     }
 }

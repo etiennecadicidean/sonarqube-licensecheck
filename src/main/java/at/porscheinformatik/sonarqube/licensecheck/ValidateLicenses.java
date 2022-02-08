@@ -30,17 +30,17 @@ public class ValidateLicenses
         this.licenseService = licenseService;
     }
 
-    public Set<Dependency> validateLicenses(Set<Dependency> dependencies, SensorContext context)
+    public Set<Dependency> validateLicenses(Set<Dependency> dependencies, SensorContext context, String language)
     {
         for (Dependency dependency : dependencies)
         {
             if (StringUtils.isBlank(dependency.getLicense()))
             {
-                licenseNotFoundIssue(context, dependency);
+                licenseNotFoundIssue(context, dependency, language);
             }
             else
             {
-                checkForLicenses(context, dependency);
+                checkForLicenses(context, dependency, language);
             }
         }
         return dependencies;
@@ -53,19 +53,22 @@ public class ValidateLicenses
 
         for (Dependency dependency : dependencies)
         {
-            for (License license : licenses)
-            {
-                if (license.getIdentifier().equals(dependency.getLicense()))
+            if (licenses != null && !licenses.isEmpty()) {
+                for (License license : licenses)
                 {
-                    usedLicenseList.add(license);
+                    if (license.getIdentifier().equals(dependency.getLicense()))
+                    {
+                        usedLicenseList.add(license);
+                    }
                 }
+    
             }
         }
 
         return usedLicenseList;
     }
 
-    private void checkForLicenses(SensorContext context, Dependency dependency)
+    private void checkForLicenses(SensorContext context, Dependency dependency, String language)
     {
         DefaultInputModule module = (DefaultInputModule) context.module();
         for (License license : licenseService.getLicenses(LicenseCheckPlugin.getRootProject(module.definition())))
@@ -76,26 +79,27 @@ public class ValidateLicenses
                 {
                     LOGGER.info("Dependency "
                         + dependency.getName()
-                        + " uses a not allowed licooense "
+                        + " uses a not allowed license "
                         + dependency.getLicense());
 
                     NewIssue issue = context
                         .newIssue()
-                        .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
+                        .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY.concat(".").concat(language),
                             LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY))
                         .at(new DefaultIssueLocation()
                             .on(context.module())
                             .message("Dependency "
-                            + dependency.getName()
-                            + " uses a not allowed license "
-                            + dependency.getLicense()));
+                                + dependency.getName()
+                                + " uses a not allowed license "
+                                + dependency.getLicense()));
                     issue.save();
+
                 }
             }
         }
     }
 
-    private static void licenseNotFoundIssue(SensorContext context, Dependency dependency)
+    private static void licenseNotFoundIssue(SensorContext context, Dependency dependency, String language)
     {
         if (StringUtils.isBlank(dependency.getLicense()))
         {
@@ -103,7 +107,7 @@ public class ValidateLicenses
 
             NewIssue issue = context
                 .newIssue()
-                .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
+                .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY.concat(".").concat(language),
                     LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY))
                 .at(new DefaultIssueLocation()
                     .on(context.module())
