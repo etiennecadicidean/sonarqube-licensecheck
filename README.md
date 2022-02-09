@@ -36,9 +36,11 @@ restart the server to install the plugin. Activate the rules of this plugin ("Li
 ## Execution
 
 When a project is analyzed using the :
-* `mvn sonar:sonar` in command line the extension is started automatically.
-* `./run-sonar-swift.sh` in command line the extension is started automatically with `sonar Scanner` for Swift Project.
-* `gralde sonarqube` in command line the extension is started automatically with android project.
+* `mvn sonar:sonar` 
+* `./run-sonar-swift.sh`
+* `./gradlew sonarqube`
+
+...in command line the extension is started automatically.
 
 ### Important
 If you want to use the `./run-sonar-swift.sh` command line, think to install `https://github.com/pivotal/LicenseFinder` before with this command line :
@@ -124,6 +126,22 @@ Note: Please check above link for instructions or follow as mentioned below
     > gradle sonarqube
 
 
+### iOS (Cocoapods, Carthage & Swift Package Manager)
+
+Use custom LicenseFinder ruby gem https://github.com/etiennecadicidean/LicenseFinder to generate license report for ios projects
+
+    license_finder report -p --format json -q  > swift-license-details.json
+
+Then run sonarqube analysis
+
+### Flutter
+
+Use custom LicenseFinder ruby gem https://github.com/etiennecadicidean/LicenseFinder to generate license report for Flutter projects
+
+    license_finder report -p --format json -q  > flutter-license-details.json
+
+Then run sonarqube analysis
+
 ## Features
 
 ### Analysis
@@ -135,8 +153,8 @@ Currently supported formats are:
 * NPM package.json files - all dependencies (except "devDependencies") are checked
   * Note that transitive dependencies are _not_ scanned unless `licensecheck.npm.resolvetransitive` is set to `true`.
 * Gradle dependencies
-* Swift dependencies (Must be analysis with `License_finder tool`)
-* Pub dependencies (Must be analysis with `License_finder tool`)
+* Swift dependencies (Reports must be generated with `License_finder tool`)
+* Dart/Pub dependencies (Reports must be generated with `License_finder tool`)
 
 ### Project Dashboard
 
