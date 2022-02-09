@@ -38,17 +38,13 @@ public class PubDependencyScanner implements Scanner
         File moduleDir = context.fileSystem().baseDir();
         Map<Pattern, String> defaultLicenseMap = licenseMappingService.getLicenseMap();
 
-        File licenseDetailsJsonFile = new File(moduleDir, "license-details.json");
+        File licenseDetailsJsonFile = new File(moduleDir, "flutter-license-details.json");
 
         if (!licenseDetailsJsonFile.exists())
         {
-            licenseDetailsJsonFile = new File(moduleDir, "flutter_licenses_converted.json");
-            if (!licenseDetailsJsonFile.exists())
-            {
-                LOGGER.info("No license-details.json file found in {} - skipping Flutter/Pub dependency scan",
+            LOGGER.info("No flutter-license-details.json file found in {} - skipping Flutter/Pub dependency scan",
                     licenseDetailsJsonFile.getPath());
-                return Collections.emptySet();
-            }
+            return Collections.emptySet();
         }
 
         return readLicenseDetailsJson(licenseDetailsJsonFile)

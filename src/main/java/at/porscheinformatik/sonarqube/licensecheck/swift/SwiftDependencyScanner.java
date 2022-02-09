@@ -43,7 +43,7 @@ public class SwiftDependencyScanner implements Scanner
 
         Map<Pattern, String> defaultLicenseMap = licenseMappingService.getLicenseMap();
 
-        File licenseDetailsJsonFile = new File(moduleDir, "license-details.json");
+        File licenseDetailsJsonFile = new File(moduleDir, "swift-license-details.json");
 
         if (!licenseDetailsJsonFile.exists())
         {
