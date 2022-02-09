@@ -13,7 +13,6 @@ import at.porscheinformatik.sonarqube.licensecheck.swift.SwiftDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.flutter.PubDependencyScanner;
 
 
-import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -23,7 +22,6 @@ import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
@@ -34,7 +32,6 @@ public class LicenseCheckSensor implements Sensor
     private static final Logger LOGGER = Loggers.get(LicenseCheckSensor.class);
     private static final Set<License> AGGREGATED_LICENSES = ConcurrentHashMap.newKeySet();
     private static final Set<Dependency> AGGREGATED_DEPENDENCIES = ConcurrentHashMap.newKeySet();
-    private final FileSystem fs;
     private final Configuration configuration;
     private final ValidateLicenses validateLicenses;
     private final Scanner[] scanners;
@@ -42,7 +39,6 @@ public class LicenseCheckSensor implements Sensor
     public LicenseCheckSensor(FileSystem fs, Configuration configuration, ValidateLicenses validateLicenses,
         LicenseMappingService licenseMappingService)
     {
-        this.fs = fs;
         this.configuration = configuration;
         this.validateLicenses = validateLicenses;
         this.scanners = new Scanner[]{
