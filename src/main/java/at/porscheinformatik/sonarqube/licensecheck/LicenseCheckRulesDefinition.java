@@ -33,6 +33,8 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
             context.createRepository(RULE_REPO_KEY_JS, LANG_JS),
             context.createRepository(RULE_REPO_KEY_GROOVY, LANG_GROOVY),
             context.createRepository(RULE_REPO_KEY_KOTLIN, LANG_KOTLIN),
+            context.createRepository(RULE_REPO_KEY_DART, LANG_DART),
+            context.createRepository(RULE_REPO_KEY_SWIFT, LANG_SWIFT),
         };
 
         for (NewRepository repo : repos)

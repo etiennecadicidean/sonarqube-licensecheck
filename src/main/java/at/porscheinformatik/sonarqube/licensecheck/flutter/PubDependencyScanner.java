@@ -52,9 +52,10 @@ public class PubDependencyScanner implements Scanner
         }
 
         return readLicenseDetailsJson(licenseDetailsJsonFile)
-            .stream()
-            .map(d -> mapMavenDependencyToLicense(defaultLicenseMap, d))
-            .collect(Collectors.toSet());
+                .stream()
+                .map(d -> mapMavenDependencyToLicense(defaultLicenseMap, d))
+                .peek(d -> d.setInputComponent(context.module()))
+                .collect(Collectors.toSet());
     }
 
     private Set<Dependency> readLicenseDetailsJson(File licenseDetailsJsonFile)

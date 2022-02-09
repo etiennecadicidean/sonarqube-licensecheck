@@ -21,6 +21,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 
@@ -56,9 +57,10 @@ public class SwiftDependencyScanner implements Scanner
         }
 
         return readLicenseDetailsJson(licenseDetailsJsonFile)
-            .stream()
-            .map(d -> mapMavenDependencyToLicense(defaultLicenseMap, d))
-            .collect(Collectors.toSet());
+                .stream()
+                .map(d -> mapMavenDependencyToLicense(defaultLicenseMap, d))
+                .peek(d -> d.setInputComponent(context.module()))
+                .collect(Collectors.toSet());
     }
 
     private Set<Dependency> readLicenseDetailsJson(File licenseDetailsJsonFile)
@@ -90,7 +92,7 @@ public class SwiftDependencyScanner implements Scanner
             String moduleLicenseUrl = null;
            
             Dependency dep = new Dependency(jsonDepObj.getString("name", null),
-                jsonDepObj.getString("version", null), moduleLicense);
+                jsonDepObj.getString("version", null), moduleLicense, LicenseCheckRulesDefinition.LANG_SWIFT);
             dep.setPomPath(moduleLicenseUrl);
             dependencySet.add(dep);
         }
