@@ -7,6 +7,8 @@ import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.measures.Metrics;
 
+import static java.lang.Boolean.TRUE;
+
 public class LicenseCheckMetrics implements Metrics
 {
     public static final String LICENSE_CHECK_DEPENDENCY_KEY = "licensecheck.dependency";

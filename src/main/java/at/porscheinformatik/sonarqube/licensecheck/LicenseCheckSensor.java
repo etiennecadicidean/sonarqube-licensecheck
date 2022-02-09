@@ -2,12 +2,18 @@ package at.porscheinformatik.sonarqube.licensecheck;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.*;
 
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.swift.SwiftDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.flutter.PubDependencyScanner;
+
+
+import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -43,7 +49,10 @@ public class LicenseCheckSensor implements Sensor
             new PackageJsonDependencyScanner(licenseMappingService,
                 configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS).orElse(false)),
             new MavenDependencyScanner(licenseMappingService),
-            new GradleDependencyScanner(licenseMappingService)};
+            new GradleDependencyScanner(licenseMappingService),
+            new SwiftDependencyScanner(licenseMappingService),
+            new PubDependencyScanner(licenseMappingService)
+        };
     }
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
@@ -114,7 +123,7 @@ public class LicenseCheckSensor implements Sensor
     public void describe(SensorDescriptor descriptor)
     {
         descriptor.name("License Check")
-            .createIssuesForRuleRepositories(RULE_REPO_KEY, RULE_REPO_KEY_JS, RULE_REPO_KEY_GROOVY);
+            .createIssuesForRuleRepositories(RULE_REPO_KEY, RULE_REPO_KEY_JS, RULE_REPO_KEY_GROOVY, RULE_REPO_KEY_DART, RULE_REPO_KEY_SWIFT);
     }
 
     @Override

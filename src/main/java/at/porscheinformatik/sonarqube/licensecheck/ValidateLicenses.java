@@ -69,12 +69,15 @@ public class ValidateLicenses
 
         for (Dependency dependency : dependencies)
         {
-            for (License license : licenses)
-            {
-                if (license.getIdentifier().equals(dependency.getLicense()))
+            if (licenses != null && !licenses.isEmpty()) {
+                for (License license : licenses)
                 {
-                    usedLicenseList.add(license);
+                    if (license.getIdentifier().equals(dependency.getLicense()))
+                    {
+                        usedLicenseList.add(license);
+                    }
                 }
+    
             }
         }
         return usedLicenseList;

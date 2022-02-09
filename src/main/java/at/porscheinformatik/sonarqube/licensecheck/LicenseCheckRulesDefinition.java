@@ -12,11 +12,15 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
     public static final String LANG_JS = "js";
     public static final String LANG_GROOVY = "grvy";
     public static final String LANG_KOTLIN = "kotlin";
+    public static final String LANG_DART = "dart";
+    public static final String LANG_SWIFT = "swift";
 
     public static final String RULE_REPO_KEY = "licensecheck";
     public static final String RULE_REPO_KEY_JS = "licensecheck-js";
     public static final String RULE_REPO_KEY_GROOVY = "licensecheck-groovy";
     public static final String RULE_REPO_KEY_KOTLIN = "licensecheck-kotlin";
+    public static final String RULE_REPO_KEY_DART = "licensecheck-dart";
+    public static final String RULE_REPO_KEY_SWIFT = "licensecheck-swift";
 
     public static final String RULE_UNLISTED_KEY = "licensecheck.unlisted";
     public static final String RULE_NOT_ALLOWED_LICENSE_KEY = "licensecheck.notallowedlicense";
