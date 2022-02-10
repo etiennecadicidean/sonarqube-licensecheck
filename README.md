@@ -130,7 +130,9 @@ Note: Please check above link for instructions or follow as mentioned below
 
 Use custom LicenseFinder ruby gem https://github.com/etiennecadicidean/LicenseFinder to generate license report for ios projects
 
-    license_finder report -p --format json -q  > swift-license-details.json
+    mkdir -p build/reports/license_finder/
+    license_finder report -p --format json -q  > build/reports/license_finder/swift-license-details.json
+
 
 Then run sonarqube analysis
 
@@ -138,9 +140,21 @@ Then run sonarqube analysis
 
 Use custom LicenseFinder ruby gem https://github.com/etiennecadicidean/LicenseFinder to generate license report for Flutter projects
 
-    license_finder report -p --format json -q  > flutter-license-details.json
+    mkdir -p build/reports/license_finder/
+    license_finder report -p --format json -q  > build/reports/license_finder/flutter-license-details.json
 
-Then run sonarqube analysis
+Man need to specify pub cache location, because pub deps are downloaded there. Both options are available : 
+
+    export PUB_CACHE=<path_the_pub_cache*>
+
+Or just give the variable at program launch : 
+
+    PUB_CACHE=<path_the_pub_cache> license_finder report -p --format json -q  > build/reports/license_finder/flutter-license-details.json
+
+\* default location is often : ~/.pub-cache
+
+
+Then run sonarqube analysis.
 
 ## Features
 

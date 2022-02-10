@@ -38,7 +38,7 @@ public class PubDependencyScanner implements Scanner
         File moduleDir = context.fileSystem().baseDir();
         Map<Pattern, String> defaultLicenseMap = licenseMappingService.getLicenseMap();
 
-        File licenseDetailsJsonFile = new File(moduleDir, "flutter-license-details.json");
+        File licenseDetailsJsonFile = new File(moduleDir, "build" + File.separator + "reports" + File.separator + "license_finder" + File.separator + "flutter-license-details.json");
 
         if (!licenseDetailsJsonFile.exists())
         {
