@@ -23,6 +23,9 @@ public class PackageJsonDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageJsonDependencyScanner.class);
 
+    private boolean isTypeScript = false;
+
+
     @Override
     public Set<Dependency> scan(File moduleDir)
     {
@@ -30,6 +33,8 @@ public class PackageJsonDependencyScanner implements Scanner
 
         if (packageJsonFile.exists())
         {
+            File isTypeScript = new File(moduleDir, "tsconfig.json");
+
             try (InputStream fis = new FileInputStream(packageJsonFile);
                 JsonReader jsonReader = Json.createReader(fis))
             {

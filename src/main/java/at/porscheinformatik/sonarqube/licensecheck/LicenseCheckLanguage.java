@@ -6,7 +6,8 @@ package at.porscheinformatik.sonarqube.licensecheck;
 public enum LicenseCheckLanguage {
     DART("dart"),
     JAVA("java"),
-    JAVASCRIPT("javascript"),
+    JAVASCRIPT("js"),
+    TYPESCRIPT("ts"),
     SWIFT("swift");
 
     private String language;
