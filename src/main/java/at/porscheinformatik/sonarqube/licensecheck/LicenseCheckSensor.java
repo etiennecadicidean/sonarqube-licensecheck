@@ -91,7 +91,7 @@ public class LicenseCheckSensor implements Sensor
             for (Scanner scanner : scanners)
             {
                 Set<Dependency> scannedLicenses = scanner.scan(fs.baseDir());
-                validateLicenses.validateLicenses(dependencies, context, scanner.getLanguage());
+                validateLicenses.validateLicenses(scannedLicenses, context, scanner.getLanguage());
                 dependencies.addAll(scannedLicenses);
             }
             ProjectDefinition project = LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
